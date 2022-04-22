@@ -1,0 +1,5 @@
+parameters:
+    phpLanguageExtensions:
+        mode: namespace
+        testNamespace: 'DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Test\'
+

@@ -1,0 +1,4 @@
+parameters:
+    phpLanguageExtensions:
+        mode: className
+
