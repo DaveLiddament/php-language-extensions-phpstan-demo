@@ -7,7 +7,9 @@ namespace DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person;
 
 
 use DaveLiddament\PhpLanguageExtensions\Friend;
+use DaveLiddament\PhpLanguageExtensions\NamespaceVisibility;
 use DaveLiddament\PhpLanguageExtensions\Package;
+use DaveLiddament\PhpLanguageExtensions\TestTag;
 
 class Person
 {
@@ -18,12 +20,13 @@ class Person
     ) {
     }
 
-    #[Package]
+    #[NamespaceVisibility]
     public function updateName(string $name): void
     {
         $this->name = $name;
     }
 
+    #[TestTag]
     public function getName(): string
     {
         return $this->name;

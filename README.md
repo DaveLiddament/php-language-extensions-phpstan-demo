@@ -2,9 +2,12 @@
 
 This is a simple demo project for showing how to use the attributes provided by [PHP Language Extensions](https://github.com/DaveLiddament/php-language-extensions).
 
-[Person](src/Person/Person.php) has methods with both the [`#[Friend]`](https://github.com/DaveLiddament/php-language-extensions#friend) and
-[`#[Package]`](https://github.com/DaveLiddament/php-language-extensions#package) attributes.
-Example code in [Demo](src/Demo/Demo.php) show correct and invalid uses of Person's methods based on the attributes.
+[Person](src/Person/Person.php) has methods with the attributes:
+- [`#[Friend]`](https://github.com/DaveLiddament/php-language-extensions#friend)
+- [`#[NamespaceVisibility]`](https://github.com/DaveLiddament/php-language-extensions#namespaceVisibility)
+- [`#[TestTag]`](https://github.com/DaveLiddament/php-language-extensions#testtag)
+
+- Example code in [Demo](src/Demo/Demo.php) show correct and invalid uses of Person's methods based on the attributes.
 
 The validation of this is done by [PHPStan](https://phpstan.org/) using the [PHPStan php language extension](https://github.com/DaveLiddament/phpstan-php-language-extensions).
 
@@ -17,20 +20,29 @@ vendor/bin/phpstan analyse src --level=max
 ```
 
 ```shell
- 5/5 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+vendor/bin/phpstan analyse src --level=max
+ 4/4 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
 
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   src/Demo/Demo.php                                                                                                                    
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                      
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                                  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                                  
-  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has package visibility and cannot be called from namespace  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo                                                                                  
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Demo/Demo.php                                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                            
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                            
+  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has Namespace Visibility, it can only be called from  
+         namespace DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person and sub-namespaces of                                          
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person                                                                          
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
 
-                                                                                                                        
- [ERROR] Found 2 errors                                                                                                 
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   Person/PersonUpdaterAction.php                                                                                             
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  14     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::getName is a test tag and can only be called from test code  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+ 
+                                                                                                                         
+ [ERROR] Found 3 errors                                                                                                 
+                                                         
 ```
 
 ### Analysing test code
@@ -42,29 +54,38 @@ vendor/bin/phpstan analyse src tests --level=max
 ```
 
 ```shell
+vendor/bin/phpstan analyse src tests --level=max
  5/5 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
 
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   src/Demo/Demo.php                                                                                                                    
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                      
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                                  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                                  
-  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has package visibility and cannot be called from namespace  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo                                                                                  
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  Line   src/Demo/Demo.php                                                                                                              
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                            
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                            
+  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has Namespace Visibility, it can only be called from  
+         namespace DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person and sub-namespaces of                                          
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person                                                                          
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
 
- ------ ------------------------------------------------------------------------------------------------------------------ 
-  Line   tests/Person/PersonTest.php                                                                                       
- ------ ------------------------------------------------------------------------------------------------------------------ 
-  17     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                   
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Test\Person\PersonTest, it can only be called from its friend(s):  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                               
- ------ ------------------------------------------------------------------------------------------------------------------ 
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   src/Person/PersonUpdaterAction.php                                                                                         
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  14     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::getName is a test tag and can only be called from test code  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   tests/Person/PersonTest.php                                                                                                
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  17     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                            
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Test\Person\PersonTest, it can only be called from its friend(s):           
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                        
+  18     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::getName is a test tag and can only be called from test code  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
 
                                                                                                                         
- [ERROR] Found 3 errors                                                                                                 
-                                                                                                                        
+ [ERROR] Found 5 errors                                                                                                 
+                                                                                                                                                                                                                                                
 ```
 
 If you want to exclude applying the `package` and `friend` checks on your test code you can do this in one of two ways.
@@ -82,23 +103,33 @@ parameters:
 Running with this config will ignore these issues in test classes:
 
 ```shell
-vendor/bin/phpstan analyse src tests --level=max -c phpstan-test-names.neon 
+vendor/bin/phpstan analyse src tests --level=max -c phpstan-test-name.neon 
 ```
 
 ```shell
+vendor/bin/phpstan analyse src tests --level=max -c phpstan-test-name.neon 
  5/5 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
 
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   src/Demo/Demo.php                                                                                                                    
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                      
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                                  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                                  
-  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has package visibility and cannot be called from namespace  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo                                                                                  
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  Line   src/Demo/Demo.php                                                                                                              
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                            
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                            
+  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has Namespace Visibility, it can only be called from  
+         namespace DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person and sub-namespaces of                                          
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person                                                                          
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   src/Person/PersonUpdaterAction.php                                                                                         
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  14     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::getName is a test tag and can only be called from test code  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+
                                                                                                                         
- [ERROR] Found 2 errors                                                                                                 
+ [ERROR] Found 3 errors                                                                                                 
+                                                                                                                   
 ```
 
 #### Excluding checks for classes based on namesapce
@@ -119,17 +150,27 @@ vendor/bin/phpstan analyse src tests --level=max -c phpstan-test-namespace.neon
 ```
 
 ```shell
+vendor/bin/phpstan analyse src tests --level=max -c phpstan-test-namespace.neon
  5/5 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
 
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  Line   src/Demo/Demo.php                                                                                                                    
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
-  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                      
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                                  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                                  
-  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has package visibility and cannot be called from namespace  
-         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo                                                                                  
- ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  Line   src/Demo/Demo.php                                                                                                              
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+  27     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::__construct cannot be called from                                
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Demo\Demo, it can only be called from its friend(s):                            
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\PersonBuilder                                                            
+  34     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::updateName has Namespace Visibility, it can only be called from  
+         namespace DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person and sub-namespaces of                                          
+         DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person                                                                          
+ ------ ------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   src/Person/PersonUpdaterAction.php                                                                                         
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  14     DaveLiddament\PhpLanguageExtensionsPhpstanDemo\Person\Person::getName is a test tag and can only be called from test code  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+
                                                                                                                         
- [ERROR] Found 2 errors                                                                                                 
+ [ERROR] Found 3 errors                                                                                                 
+                                                                                                                        
 ```

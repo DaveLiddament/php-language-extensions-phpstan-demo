@@ -11,6 +11,7 @@ class PersonUpdaterAction
 
     public function updateName(Person $person, string $name): void
     {
+        $person->getName();
         $person->updateName($name);
     }
 

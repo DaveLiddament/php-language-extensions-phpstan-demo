@@ -2,3 +2,4 @@
 Vagrantfile
 vendor/
 .idea/
+.phpunit.cache
